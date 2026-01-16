@@ -92,16 +92,18 @@ async def health_check():
     }
 
 
-# Root endpoint
+# Root endpoint - serve Next.js frontend
+from fastapi.responses import FileResponse
+
 @app.get("/", tags=["Root"])
 async def root():
-    """Root endpoint with API information."""
+    """Serve the Next.js frontend."""
+    index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '.next', 'server', 'pages', 'index.html'))
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
     return {
-        "name": "Sparkie API",
-        "version": "1.0.0",
-        "description": "The Queen Bee's Chatbot API for Polleneer",
-        "documentation": "/docs",
-        "health": "/health"
+        "error": "Frontend not found",
+        "message": "Next.js build files are not properly deployed"
     }
 
 
