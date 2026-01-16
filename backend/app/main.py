@@ -4,6 +4,7 @@ Main FastAPI application entry point.
 """
 import os
 import sys
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -102,6 +103,12 @@ async def root():
         "documentation": "/docs",
         "health": "/health"
     }
+
+
+# Serve Next.js static files
+static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', '..', '.next', 'static')
+if os.path.exists(static_dir):
+    app.mount("/_next/static", StaticFiles(directory=static_dir), name="static")
 
 
 # Global exception handler
