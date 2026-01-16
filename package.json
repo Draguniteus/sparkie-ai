@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cd frontend && npm run build && cd .. && cp -r frontend/.next .next && cp -r frontend/public . && cp frontend/package.json .",
+    "build": "cd frontend && npm run build && cd .. && cp -r frontend/.next .next && cp frontend/package.json .",
     "start": "next start",
     "lint": "next lint"
   },
