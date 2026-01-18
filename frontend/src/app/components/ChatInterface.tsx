@@ -45,7 +45,7 @@ export function ChatInterface() {
         <div className="flex items-center gap-3">
           <QueenAvatar size="sm" />
           <div>
-            <h2 className="text-lg font-bold text-yellow-400">Sparkie</h2>
+            <h2 className="text-lg font-bold text-yellow-400">Sparkie ⚡</h2>
             <p className="text-xs text-yellow-600">Queen Bee of Polleneer</p>
           </div>
         </div>

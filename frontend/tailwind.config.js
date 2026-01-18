@@ -50,7 +50,7 @@ module.exports = {
       },
       backgroundImage: {
         'honey-gradient': 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-        'hive-pattern': "url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l25 15v30L30 75 5 50V20L30 5z' fill='%231a1a1a' fill-opacity='0.05'/%3E%3C/svg%3E")",
+        'hive-pattern': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l25 15v30L30 75 5 50V20L30 5z' fill='%231a1a1a' fill-opacity='0.05'/%3E%3C/svg%3E\")",
       },
     },
   },

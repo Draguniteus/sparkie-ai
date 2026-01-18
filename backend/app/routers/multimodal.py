@@ -9,7 +9,7 @@ from typing import Optional
 
 from app.models.schemas import ErrorResponse
 from app.services.modelscope_image import get_modelscope_service, ModelScopeImageService
-from app.middleware.auth import get_current_user, User
+from app.middleware.auth import get_current_user, CurrentUser
 from loguru import logger
 
 
@@ -111,7 +111,7 @@ def detect_image_request(text: str) -> Optional[str]:
 )
 async def generate_image(
     request: ImageGenerateRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user),
     modelscope_service: ModelScopeImageService = Depends(get_modelscope_service)
 ):
     """
@@ -220,7 +220,7 @@ async def get_available_sizes():
     description="Check if ModelScope image generation is available"
 )
 async def check_image_service_status(
-    current_user: User = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user),
     modelscope_service: ModelScopeImageService = Depends(get_modelscope_service)
 ):
     """Check if the image generation service is configured and available."""

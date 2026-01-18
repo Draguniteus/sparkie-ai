@@ -4,13 +4,14 @@ Chat API endpoints - The heart of Sparkie's conversations.
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 import json
 
 from app.models.database import async_session, Conversation, Message
 from app.models.schemas import ChatRequest, ChatResponse, ConversationResponse
 from app.services.minimax import get_minimax_service, MiniMaxService
 from app.services.sparkie_prompt import get_sparkie_system_prompt, get_greeting
-from app.middleware.auth import get_current_user, User
+from app.middleware.auth import get_current_user, CurrentUser
 from loguru import logger
 
 
@@ -20,7 +21,7 @@ router = APIRouter(prefix="/chat", tags=["Chat"])
 @router.post("", response_model=ChatResponse)
 async def chat(
     request: ChatRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user),
     minimax_service: MiniMaxService = Depends(get_minimax_service)
 ):
     """Send a message to Sparkie and get a response (non-streaming)."""
@@ -94,7 +95,7 @@ async def chat(
 @router.post("/stream")
 async def chat_stream(
     request: ChatRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user),
     minimax_service: MiniMaxService = Depends(get_minimax_service)
 ):
     """Send a message to Sparkie and stream the response."""
@@ -171,7 +172,7 @@ async def chat_stream(
 async def get_conversations(
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     """Get all conversations for the current user."""
     try:
@@ -206,7 +207,3 @@ async def get_conversations(
     except Exception as e:
         logger.error(f"Error getting conversations: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch conversations")
-
-
-# Import select at the top
-from sqlalchemy import select

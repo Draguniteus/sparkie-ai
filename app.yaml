@@ -1,0 +1,30 @@
+name: sparkie-ai
+region: nyc1
+services:
+  - name: web
+    github:
+      repo: Draguniteus/sparkie-ai
+      branch: master
+      deploy_on_push: true
+    dockerfile_path: Dockerfile
+    environment_slug: docker
+    instance_size_slug: basic-xxs
+    http_port: 8080
+    envs:
+      - key: MINIMAX_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: MODELSCOPE_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: DEBUG
+        value: "false"
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: DATABASE_URL
+        value: "sqlite:///./sparkie.db"

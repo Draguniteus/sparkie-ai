@@ -13,7 +13,7 @@ from pydantic import EmailStr
 from app.models.database import async_session, User
 from app.models.schemas import UserCreate, UserResponse, Token
 from app.config import settings
-from app.middleware.auth import get_current_user, User
+from app.middleware.auth import get_current_user, CurrentUser
 from loguru import logger
 
 
@@ -130,7 +130,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_me(current_user: User = Depends(get_current_user)):
+async def get_me(current_user: CurrentUser = Depends(get_current_user)):
     """Get current user information."""
     return UserResponse(
         id=current_user.id,

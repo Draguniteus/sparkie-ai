@@ -98,17 +98,22 @@ from fastapi.responses import FileResponse
 @app.get("/", tags=["Root"])
 async def root():
     """Serve the Next.js frontend."""
-    index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '.next', 'server', 'pages', 'index.html'))
+    # Next.js 14 with App Router structure - look in root after copying
+    index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'server', 'app', 'index.html'))
     if os.path.exists(index_path):
         return FileResponse(index_path)
+    # Fallback for older Next.js structure
+    fallback_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'server', 'pages', 'index.html'))
+    if os.path.exists(fallback_path):
+        return FileResponse(fallback_path)
     return {
         "error": "Frontend not found",
-        "message": "Next.js build files are not properly deployed"
+        "message": "Please run 'cd frontend && npm run build' to generate the Next.js build files"
     }
 
 
 # Serve Next.js static files
-static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '.next', 'static'))
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'static'))
 if os.path.exists(static_dir):
     app.mount("/_next/static", StaticFiles(directory=static_dir), name="static")
 
@@ -125,6 +130,46 @@ async def global_exception_handler(request: Request, exc: Exception):
             "detail": str(exc) if settings.debug else "An unexpected error occurred"
         }
     )
+
+
+# Catch-all route for Next.js frontend - must be last
+@app.get("/{path:path}", tags=["Catch-all"])
+async def serve_frontend(path: str):
+    """Serve the Next.js frontend for any non-API path."""
+    # Skip API paths - they should be handled by routers
+    if path.startswith("api/"):
+        return JSONResponse(
+            status_code=404,
+            content={"error": "Not found", "detail": f"API endpoint /{path} not found"}
+        )
+
+    # Check for static/public files first (favicon, manifest, avatar)
+    public_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'public'))
+    public_path = os.path.join(public_dir, path)
+    if os.path.isfile(public_path):
+        return FileResponse(public_path)
+
+    # Serve Next.js pages
+    # Check for common Next.js paths
+    frontend_paths = [
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'server', 'app', path, 'index.html')),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'server', 'app', f'{path}.html')),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'server', 'app', 'index.html')),
+    ]
+
+    for frontend_path in frontend_paths:
+        if os.path.exists(frontend_path):
+            return FileResponse(frontend_path)
+
+    # Fallback to index.html for client-side routing
+    index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'server', 'app', 'index.html'))
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+
+    return {
+        "error": "Frontend not found",
+        "message": "Please run 'cd frontend && npm run build' to generate the Next.js build files"
+    }
 
 
 if __name__ == "__main__":

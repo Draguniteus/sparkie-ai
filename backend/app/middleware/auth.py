@@ -17,9 +17,9 @@ from loguru import logger
 security = HTTPBearer()
 
 
-class User:
-    """User dependency class for FastAPI."""
-    
+class CurrentUser:
+    """Current user dependency class for FastAPI."""
+
     def __init__(
         self,
         id: int,
@@ -37,7 +37,7 @@ class User:
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
-) -> User:
+) -> CurrentUser:
     """Validate JWT token and return current user."""
     try:
         token = credentials.credentials
@@ -76,7 +76,7 @@ async def get_current_user(
                     headers={"WWW-Authenticate": "Bearer"},
                 )
             
-            return User(
+            return CurrentUser(
                 id=user.id,
                 username=user.username,
                 email=user.email,
